@@ -1,0 +1,52 @@
+name: Qemu RISC-V test
+
+on: [push, pull_request]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  Build_Test:
+    runs-on: ubuntu-latest
+    env:
+        xuetie_toolchain: https://github.com/T-head-Semi/riscv-matrix-extension-spec/releases/download/v0.3.0/
+        toolchain_file_name: Xuantie-gcc-linux-glibc-x86_64-matrix.tar.gz
+    strategy:
+        fail-fast: false
+        matrix:
+            include:
+              - target: Square matrices
+                opts: square
+              - target: Non-square matrices
+                opts: nonsquare
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: install build deps
+        run: |
+            sudo apt-get update
+            sudo apt-get install cmake ninja-build autoconf automake autotools-dev make ccache
+
+      - name: Set env
+        run: |
+            ./env.sh
+
+
+      - name: Build
+        run: |
+            export PATH="./tools/gcc/bin:$PATH"
+            cmake CMakeLists.txt -DTARGET_ARCH=RV64GCVM -DENABLE_TEST=ON -DCMAKE_C_COMPILER=riscv64-unknown-linux-gnu-gcc -DCMAKE_CXX_COMPILER=riscv64-unknown-linux-gnu-g++ -DBUILD_TYPE=Release -DBUILD_STATIC=ON -B_build
+            cmake --build _build
+
+      - name: Test
+        run: |
+            export PATH="./tools/qemu/bin:$PATH"
+            # qemu-riscv64 -cpu c910v -L ./tools/gcc/sysroot/ ./_build/test/test_ref_${{ matrix.opts }}
+            # qemu-riscv64 -cpu c910v -L ./tools/gcc/sysroot/ ./_build/test/test_rvv_${{ matrix.opts }}
+            qemu-riscv64 -cpu c907fdvm-rv64 -L ./tools/gcc/sysroot/ ./_build/test/test_rvm_${{ matrix.opts }}
