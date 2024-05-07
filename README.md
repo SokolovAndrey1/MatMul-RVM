@@ -1,10 +1,15 @@
 # RISC-V THEAD Matrix Multiplication practice
 
-Репозиторий для практической работы по оптимизации умножения матриц для архитектуры RISC-V на RISC-V THEAD Matrix Extention
+Репозиторий для практической работы по оптимизации умножения матриц для архитектуры RISC-V с помощью RISC-V THEAD Matrix Extention
 
 ## Задача
 
-1) Разработать 
+Разработать реализацию блочного умножения матриц с float элементами используюя инструкции матричного расширения THEAD.\
+Размер блока должен быть 4х4. Референсная реализация для квадратных матриц [gemm_block4x4_ref](lib/src/gemm_blocked_ref.c).
+
+* [Описание инструкций матричного расширения](https://github.com/T-head-Semi/riscv-matrix-extension-spec/blob/master/spec/matrix_instructions.adoc)
+* [RVM intrinsics](https://github.com/T-head-Semi/riscv-matrix-extension-spec/blob/master/doc/intrinsic/rvm-intrinsic-api.adoc)
+* [Пример использования матричного расширения](https://github.com/T-head-Semi/riscv-matrix-extension-spec/blob/master/demos/intrinsic_matmul/matmul.c) (поэлементное умножение матриц с целыми числами)
 
 ## Алгоритм работы
 
@@ -14,7 +19,7 @@
 3) Запустить тесты на RISC-V Qemu для квадратных и прямоугольных матриц.
 5) Реализовать [gemm_block4x4_rvm](lib/src/gemm_blocked_rvm.c), используя инструкции из матричного расширения:
     * Для квадратных матриц с размерами, кратные 4. Должны проходить тесты `_build/test/test_rvm_square`.
-    * _Опционально:_ Для произвольных матриц Должны проходить тесты `_build/test/test_rvm_nonsquare`.
+    * _Опционально:_ Для произвольных размеров матриц должны проходить тесты `_build/test/test_rvm_nonsquare`.
 6) Открыть Pull Request c оптимизациями.
     * Соотвествующий произведенным оптимизациям CI должен быть зеленым.
 
@@ -41,8 +46,10 @@
 
 ``
 ./tools/qemu/bin/qemu-riscv64 -cpu c907fdvm-rv64 ./_build/test/test_rvm_square
-./tools/qemu/bin/qemu-riscv64 -cpu c907fdvm-rv64 ./_build/test/test_rvm_nonsquare
+``\
 ``
+./tools/qemu/bin/qemu-riscv64 -cpu c907fdvm-rv64 ./_build/test/test_rvm_nonsquare
+``\
 где `c907fdvm-rv64` нужен для поддержки RISC-V Matrix Extention
 
 В случае ошибки:\
