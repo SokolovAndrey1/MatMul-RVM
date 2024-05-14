@@ -40,7 +40,7 @@ static inline void process_block_4x4(const size_t k, const float *A, const size_
     mfloat32_t mb = mld_f32(BT, k * sizeof(*BT));
     mfloat32_t ans = mld_f32(C, ldc * sizeof(*C));
 
-    ans = fmmacc_mf32(ans, ma, mb);  // ans = ma * mb.T ???
+    ans = fmmacc_mf32(ans, ma, mb);  // ans = ans + ma * mb.T ???
     volatile float Ct[BLOCK_SIZE * BLOCK_SIZE];
     mst_f32_mf32(Ct, BLOCK_SIZE * sizeof(*Ct), ans);  // mst_f32_mf32(C, ldc * sizeof(*C), ans) zeroes the elements between stride ???
     for (size_t i = 0; i < BLOCK_SIZE; i++) {
