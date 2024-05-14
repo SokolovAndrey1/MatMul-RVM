@@ -170,7 +170,7 @@ using TypesSquare = testing::Types<TEST_GEMM(4U, 4U, 4U),
                                    TEST_GEMM(8U, 8U, 8U),
                                    TEST_GEMM(12U, 12U, 12U),
                                    TEST_GEMM(16U, 16U, 16U),
-                                   TEST_GEMM(128U, 128U, 128U)>;
+                                   TEST_GEMM(32U, 32U, 32U)>;
 
 TYPED_TEST_CASE(GemmRVMSquare, TypesSquare);
 

@@ -49,4 +49,4 @@ jobs:
             export PATH="./tools/qemu/bin:$PATH"
             # qemu-riscv64 -cpu c910v -L ./tools/gcc/sysroot/ ./_build/test/test_ref_${{ matrix.opts }}
             # qemu-riscv64 -cpu c910v -L ./tools/gcc/sysroot/ ./_build/test/test_rvv_${{ matrix.opts }}
-            qemu-riscv64 -cpu c907fdvm-rv64,rlen=512 -L ./tools/gcc/sysroot/ ./_build/test/test_rvm_${{ matrix.opts }}
+            qemu-riscv64 -cpu c907fdvm-rv64,rlen=1024 -L ./tools/gcc/sysroot/ ./_build/test/test_rvm_${{ matrix.opts }}
