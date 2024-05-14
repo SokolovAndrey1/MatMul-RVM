@@ -1,5 +1,3 @@
-#include <string.h>
-
 #include "gemm.h"
 
 #define BLOCK_SIZE 4
