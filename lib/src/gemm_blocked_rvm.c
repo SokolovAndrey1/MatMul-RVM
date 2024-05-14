@@ -28,7 +28,7 @@ extern void gemm_block4x4_rvm(const float *A, const float *B, float *C, const si
     }
 }
 
-static inline void process_block_4x4(const size_t k, const float *A, const size_t lda, const float *B, const size_t ldb, float *C, const size_t ldc) {
+static inline void process_block_4x4(const size_t m, const float *A, const size_t lda, const float *B, const size_t ldb, float *C, const size_t ldc) {
     volatile float BT[BLOCK_SIZE * k];
     for (size_t i = 0; i < k; i++) {
         for (size_t j = 0; j < BLOCK_SIZE; j++) {
