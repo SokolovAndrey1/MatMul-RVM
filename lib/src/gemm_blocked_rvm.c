@@ -3,7 +3,7 @@
 
 #define BLOCK_SIZE 4
 
-static inline void process_block_4x4(const size_t k, const float *A, const size_t lda, const float *B, const size_t ldb, float *C, const size_t ldc) {
+static inline void process_block_4x4(const size_t m, const float *A, const size_t lda, const float *B, const size_t ldb, float *C, const size_t ldc) {
     long stride = k * sizeof(float32_t);
     printf("k = %d stride = %d\n", k, stride);
 
