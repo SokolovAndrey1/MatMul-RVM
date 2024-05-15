@@ -38,7 +38,7 @@ static inline void process_block_4x4(const size_t m, const float *A, const size_
     mfloat32_t ans = mld_f32(C, ldc * sizeof(*C));
     for (size_t p = 0; p < m; p += BLOCK_SIZE) {
         ma = mld_f32(A + p, lda * sizeof(*A));
-        mb = mld_f32(BT + p, lda * sizeof(*B));
+        mb = mld_f32(BT + p, m * sizeof(*B));
         ans = fmmacc_mf32(ans, ma, mb);
         mst_f32_mf32(C, ldc * sizeof(*C), ans);
     }
