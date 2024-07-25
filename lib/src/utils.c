@@ -1,4 +1,5 @@
 #include "gemm.h"
+#include <thead_matrix.h>
 
 /**
  * Prints the contents of a 2D matrix.
@@ -33,7 +34,7 @@ void print_matrix_reg(const char *fmt, mfloat32_t reg, size_t n, size_t m)
     // const size_t max_reg_count = 16;
     float tmp_buf[16] = {0.0f};
     printf("%s:\n", fmt);
-    mst_f32_mf32(tmp_buf, n * sizeof(float), reg);
+    __riscv_th_mst_f32(tmp_buf, n * sizeof(float), reg, 4, 4);
     for (size_t row = 0; row < n; row++)
     {
         for (size_t col = 0; col < m; col++)

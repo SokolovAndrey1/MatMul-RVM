@@ -1,4 +1,5 @@
 #include "gemm.h"
+#include <thead_matrix.h>
 
 #define BLOCK_SIZE 4
 
@@ -57,61 +58,47 @@ static inline void process_block_nxk(const size_t n, const size_t k, const size_
     // To increment B pointer after each iteration
     const size_t offset_b = BLOCK_SIZE * ldb;
 
-    mcfgm(n);
-    mcfgk(k * sizeof(float));
     // Load C (n x k) block
-    mfloat32_t mc = mld_f32(C, ldc * sizeof(float));
+    mfloat32_t mc = __riscv_th_mld_f32(C, ldc * sizeof(float), n, k);
 
     size_t block_m;
     for (block_m = 0; block_m < blocks_m; block_m += BLOCK_SIZE) {
-        mcfgm(n);
-        mcfgk(BLOCK_SIZE * sizeof(float));
         // Load A (n x 4) block
-        mfloat32_t ma = mld_f32(A+block_m, stride_a);
+        mfloat32_t ma = __riscv_th_mld_f32(A+block_m, stride_a, n, BLOCK_SIZE);
 
         // Transpose B (4 x k) block
-        for (int row = 0; row < BLOCK_SIZE; row++) {
-            for (int col = 0; col < k; col++) {
+        for (size_t row = 0; row < BLOCK_SIZE; row++) {
+            for (size_t col = 0; col < k; col++) {
                 block_b[col*BLOCK_SIZE+row] = ptr_b[(row * ldb) + col];
             }
         }
 
-        mcfgm(k);
         // Load B (k x 4) block
-        mfloat32_t mb = mld_f32(block_b, BLOCK_SIZE * sizeof(float));
+        mfloat32_t mb = __riscv_th_mld_f32(block_b, BLOCK_SIZE * sizeof(float), k, BLOCK_SIZE);
 
-        mcfgm(n);
-        mcfgn(k);
         // C (n x k) += A (n x 4) * B (k x 4)
-        mc = fmmacc_mf32(mc, ma, mb);
+        mc = __riscv_th_fmmacc (mc, ma, mb, n, k, BLOCK_SIZE);
 
         ptr_b += offset_b;
         ptr_a += BLOCK_SIZE;
     }
     if (tail_m) {
-        mcfgm(n);
-        mcfgn(BLOCK_SIZE);
-        mcfgk(tail_m * sizeof(float));
         // Load A (n x tail_m) block
-        mfloat32_t ma = mld_f32(A+block_m, stride_a);
+        mfloat32_t ma = __riscv_th_mld_f32(A+block_m, stride_a, n, tail_m);
 
         // Transpose B (tail_m x k) block
-        for (int row = 0; row < tail_m; row++) {
-            for (int col = 0; col < k; col++) {
+        for (size_t row = 0; row < tail_m; row++) {
+            for (size_t col = 0; col < k; col++) {
                 block_b[col*BLOCK_SIZE+row] = ptr_b[(row * ldb) + col];
             }
         }
 
-        mcfgm(k);
         // Load B (k x tail_m) block
-        mfloat32_t mb = mld_f32(block_b, BLOCK_SIZE * sizeof(float));
+        mfloat32_t mb = __riscv_th_mld_f32(block_b, BLOCK_SIZE * sizeof(float), k, tail_m);
 
-        mcfgm(n);
-        mcfgn(k);
-        // C (n x k) += A (tail_m x 4) * B (tail_m x 4)
-        mc = fmmacc_mf32(mc, ma, mb);
+        // C (n x k) += A (n x tail_m) * B (k x tail_m)
+        mc = __riscv_th_fmmacc (mc, ma, mb, n, k, tail_m);
     }
-    mcfgk(k * sizeof(float));
     // Store C (n x k) block
-    mst_f32_mf32(C, ldc * sizeof(float), mc);
+    __riscv_th_mst_f32(C, ldc * sizeof(float), mc, n, k);
 }

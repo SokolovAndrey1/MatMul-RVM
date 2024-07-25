@@ -5,6 +5,8 @@ extern "C" {
 #include "gemm.h"
 }
 
+#include <thead_matrix.h>
+
 #include "gtest/gtest.h"
 
 #include <cmath>

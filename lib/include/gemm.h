@@ -6,7 +6,6 @@
 #include <assert.h>
 #include <stdio.h>
 
-#include <riscv_matrix.h>
 #include <riscv_vector.h>
 
 /**

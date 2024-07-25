@@ -9,8 +9,10 @@ BUILD_TYPE="Release" # Release or Debug
 BUILD_FOLDER="_build"
 
 # Path to C and C++ compilers
-C_COMPILER_PATH="$CURRENT_DIR/tools/gcc/bin/riscv64-unknown-linux-gnu-gcc"
-CXX_COMPILER_PATH="$CURRENT_DIR/tools/gcc/bin/riscv64-unknown-linux-gnu-g++"
+#
+# T-HEAD toolchain v2.10.1 can be downloaded from https://www.xrvm.cn/community/download?id=4333581795569242112
+C_COMPILER_PATH="$HOME/Xuantie-900-gcc-linux-6.6.0-glibc-x86_64-V2.10.1/bin/riscv64-unknown-linux-gnu-gcc"
+CXX_COMPILER_PATH="$HOME/Xuantie-900-gcc-linux-6.6.0-glibc-x86_64-V2.10.1/bin/riscv64-unknown-linux-gnu-g++"
 
 # Clear build folder
 # Comment if not needed
